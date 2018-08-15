@@ -41,7 +41,7 @@ while i < Student:
     browser.open(now.strip())
     access = browser.get_current_page()
 
-    # 過濾博士生資料
+    # 去除掉博士生資料
     degree = access.body.form.div.table.tbody.tr.td.table.find("th",text="學位類別:").find_next_sibling().get_text()
     if (degree == "博士"):
         Student += 1
