@@ -25,7 +25,7 @@ browser["jpsize"] = "100"
 browser["sortby"] = "-yr"
 browser["SubmitChangePage"] = "1"
 browser.submit_selected()
-
+sdfasdfasdf
 
 # 進入第一項
 enter = "cgi-bin/gs32/tugsweb.cgi/ccd=" + code + "/r"
