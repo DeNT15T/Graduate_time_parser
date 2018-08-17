@@ -1,5 +1,4 @@
 import mechanicalsoup
-import requests
 import student_id
 
 # 初始宣告
@@ -7,7 +6,6 @@ School = input('欲查詢學校[1.交大 2.中央 3.清大 4.陽明]，輸入數
 Name = input('教授名稱：')
 Input_Student = int(input('參考最近碩士畢業生的數量：'))
 Student = Input_Student
-# url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/tugsweb.cgi?o=dwebmge'
 url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dwebmge'
 
 browser = mechanicalsoup.StatefulBrowser()
