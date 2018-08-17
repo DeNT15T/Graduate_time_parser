@@ -1,11 +1,14 @@
 import mechanicalsoup
 import requests
+import student_id
 
 # 初始宣告
+School = input('欲查詢學校[1.交大 2.中央 3.清大 4.陽明]，輸入數字：')
 Name = input('教授名稱：')
 Input_Student = int(input('參考最近碩士畢業生的數量：'))
 Student = Input_Student
-url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/tugsweb.cgi?o=dwebmge'
+# url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/tugsweb.cgi?o=dwebmge'
+url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dwebmge'
 
 browser = mechanicalsoup.StatefulBrowser()
 browser.open(url)
@@ -13,11 +16,12 @@ browser.select_form('form[name="main"]')
 # 填入資料並開始搜尋
 browser["qs0"] = Name
 browser["dcf"] = "ad"
+browser["limitdb"] = int(School)-1
 browser.submit_selected()
 
 # 紀錄網址中的ccd項
 ccd = browser.get_url()
-ccd = ccd[56:62:]
+ccd = ccd[54:60:]
 
 # 根據畢業年遞減排序
 browser.select_form('form[name="main"]')
@@ -26,7 +30,7 @@ browser["SubmitChangePage"] = "1"
 browser.submit_selected()
 
 # 進入第一筆資料，並取得資料網址
-enter = "cgi-bin/gs32/tugsweb.cgi/ccd=" + ccd + "/r"
+enter = "/cgi-bin/gs32/gsweb.cgi/ccd=" + ccd + "/record"
 browser.follow_link(enter.strip())
 now = browser.get_url()
 
@@ -37,7 +41,7 @@ Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0)
 #for i in range(1,Student+1):
 while i < Student:
     i += 1
-    now = now[:73] + str(i)
+    now = now[:71] + str(i)
     browser.open(now.strip())
     access = browser.get_current_page()
 
@@ -58,9 +62,15 @@ while i < Student:
     grad_year = access.body.form.div.table.tbody.tr.td.table.find("th",text="畢業學年度:").find_next_sibling().get_text()
 
     # 過濾出學號中的入學年資訊
-    number = number[0:2]
-    if(number[0]=="0"):
-        number = "1" + number
+    if(School == "1"):
+        number = student_id.NCTU(number)
+    elif(School == "2"):
+        number = student_id.NCU(number)
+    elif(School == "3"):
+        number = student_id.NTHU(number)
+    elif(School == "4"):
+        number = student_id.NYMU(number)
+
 
     # 畢業年 - 入學年
     calculate = int(grad_year) - int(number)
