@@ -1,4 +1,7 @@
-# NCTU Graduate_time parser
+# University System of Taiwan Graduate_time parser
+
+2018-8-17 update: 支援中央、清大、陽明
+
 計算方式：x = 畢業年 - 入學年
 
 x == 1 : 兩年準時畢業 </br>
