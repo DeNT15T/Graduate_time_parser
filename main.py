@@ -6,7 +6,21 @@ School = input('欲查詢學校[1.交大 2.中央 3.清大 4.陽明]，輸入數
 Name = input('教授名稱：')
 Input_Student = int(input('參考最近碩士畢業生的數量：'))
 Student = Input_Student
+
+# 系所過濾
+Filter_Count = input('欲過濾的系所數量（選填）：')
+Filter = []
+if(Filter_Count == ''):
+    Filter_Count = 0
+else:
+    Filter_Count = int(Filter_Count)
+while Filter_Count:
+    Filter.append(input('過濾系所：'))
+    Filter_Count -= 1
+
 url = 'http://etd.lib.nctu.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dwebmge'
+
+print("------------Searching...------------")
 
 browser = mechanicalsoup.StatefulBrowser()
 browser.open(url)
@@ -35,17 +49,37 @@ now = browser.get_url()
 # Y2：兩年畢業、Y2_3：兩年以上三年以下畢業，以此類推；previous_number用來紀錄前一筆的學號
 Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0)
 
+# 檢查無窮迴圈用的變數
+diff_odd, diff_even, check = (0, 0, 0) 
+
 # 利用迴圈依序進入每一筆資料
-#for i in range(1,Student+1):
 while i < Student:
     i += 1
     now = now[:71] + str(i)
     browser.open(now.strip())
     access = browser.get_current_page()
 
-    # 去除掉博士生資料
+    # 避免過度過濾導致無窮迴圈
+    if(i%2==1):
+        diff_odd = Student - i
+    else:
+        diff_even = Student - i
+    if(diff_odd == diff_even):
+        check += 1
+    else:
+        check = 0
+    if(check == 50):
+        break
+
+    # 過濾博士生資料
     degree = access.body.form.div.table.tbody.tr.td.table.find("th",text="學位類別:").find_next_sibling().get_text()
     if (degree == "博士"):
+        Student += 1
+        continue
+
+    # 過濾系所
+    Department = access.body.form.div.table.tbody.tr.td.table.find("th",text="系所名稱:").find_next_sibling().get_text()
+    if(Department in Filter):
         Student += 1
         continue
 
