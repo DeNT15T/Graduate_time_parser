@@ -49,7 +49,7 @@ browser.follow_link(enter.strip())
 now = browser.get_url()
 
 # Y2：兩年畢業、Y2_3：兩年以上三年以下畢業，以此類推；previous_number用來紀錄前一筆的學號
-Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0)
+Y1, Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0, 0)
 
 # 檢查無窮迴圈用的變數
 diff_odd, diff_even, check = (0, 0, 0)
@@ -70,7 +70,8 @@ while i < Student:
         check += 1
     else:
         check = 0
-    if(check == 50):
+    if(check == 30):
+        i -= 30
         break
 
     # 過濾博士生資料
@@ -106,11 +107,16 @@ while i < Student:
         enter_year = student_id.NYMU(number)
 
     # 畢業生名字
-    student_name = access.body.form.div.table.tbody.tr.td.table.find("th",text="作者:").find_next_sibling().get_text()
-
+    try:
+        student_name = access.body.form.div.table.tbody.tr.td.table.find("th",text="作者:").find_next_sibling().get_text()
+    except AttributeError:
+        student_name = access.body.form.div.table.tbody.tr.td.table.find("th",text="作者(中文):").find_next_sibling().get_text()
     # 畢業年 - 入學年
     calculate = int(grad_year) - int(enter_year)
-    if calculate == 1:
+    if calculate == 0:
+        Y1 += 1
+        new = {student_name:[int(enter_year),"1"]}
+    elif calculate == 1:
         Y2 += 1
         new = {student_name:[int(enter_year),"2"]}
     elif calculate == 2:
@@ -127,10 +133,11 @@ while i < Student:
     detail.data.update(new)
 
 print("最近", Input_Student, "筆碩士畢業生紀錄中")
+print(Y1, "位天才一年畢業")
 print(Y2, "位準時兩年畢業")
 print(Y2_3, "位兩到三年畢業")
 print(Y3_4, "位三到四年畢業")
 print(Y4_beyond, "位四年以上畢業")
 
-# 顯示口試時間詳情
-detail.show(Name, Student, Y2, Y2_3, Y3_4, Y4_beyond)
+# 顯示口試時間詳情（將i代替Student傳入，藉此減少多餘搜尋的工作量）
+detail.show(Name, i, Y1, Y2, Y2_3, Y3_4, Y4_beyond)
