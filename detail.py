@@ -6,7 +6,7 @@ L2, L2_3, L3_4, L4_beyond = ([],[],[],[])
 
 
 def show(Name, Student, Y2, Y2_3, Y3_4, Y4_beyond):
-    print("-------------Detail searching...------------")
+    print("--------------Detail searching...-------------")
 
     # 開啟url
     url = 'https://ndltd.ncl.edu.tw/cgi-bin/gs32/gsweb.cgi/login?o=dwebmge'
