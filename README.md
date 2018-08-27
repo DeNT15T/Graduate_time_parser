@@ -1,5 +1,7 @@
 # University System of Taiwan Graduate_time parser
 
+2018-8-23 update: 支援顯示口試日期
+
 2018-8-18 update: 支援系所過濾
 
 2018-8-17 update: 支援中央、清大、陽明
