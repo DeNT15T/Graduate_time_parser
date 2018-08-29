@@ -8,12 +8,12 @@ from Student_id import NumberCalculator
 school = int(input('欲查詢學校[0.交大 1.中央 2.清大 3.陽明]，輸入數字：'))
 professor_name = input('教授名稱：')
 num_of_students = int(input('參考最近碩士畢業生的數量：'))
-if professor_name is '' or school < 0 or school >= 4:
+if professor_name == '' or school < 0 or school >= 4:
     raise ValueError
 
 # 系所過濾
 input_str = input('欲過濾的系所數量（選填）：')
-filter_count = 0 if input_str is '' else int(input_str)
+filter_count = 0 if input_str == '' else int(input_str)
 del input_str
 
 Filter = []
@@ -68,23 +68,23 @@ while i < Student:
     access = browser.get_current_page()
 
     # 避免過度過濾導致無窮迴圈
-    if i % 2 is 1:
+    if i % 2 == 1:
         diff_odd = Student - i
     else:
         diff_even = Student - i
 
-    if diff_odd is diff_even:
+    if diff_odd == diff_even:
         check += 1
     else:
         check = 0
 
-    if check is 30:
+    if check == 30:
         i -= 30
         break
 
     # 過濾博士生資料
     degree = access.body.form.div.table.tbody.tr.td.table.find("th", text="學位類別:").find_next_sibling().get_text()
-    if degree is "博士":
+    if degree == "博士":
         Student += 1
         continue
 
@@ -96,7 +96,7 @@ while i < Student:
 
     # 取得學號，並偵測第 i 筆資料是否已超過教授收過的學生量
     number = access.body.form.div.table.tbody.tr.td.table.find("th", text="學號:").find_next_sibling().get_text()
-    if previous_number is number:
+    if previous_number == number:
         break
     else:
         previous_number = number
