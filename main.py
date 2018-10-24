@@ -44,7 +44,7 @@ browser["SubmitChangePage"] = "1"
 browser.submit_selected()
 
 # 進入第一筆資料，並取得資料網址
-enter = "/cgi-bin/gs32/gsweb.cgi/ccd=" + ccd + "/record"
+enter = "/cgi-bin/gs32/gsweb.cgi/ccd" + ccd + "./record"
 browser.follow_link(enter.strip())
 now = browser.get_url()
 
@@ -57,7 +57,7 @@ diff_odd, diff_even, check = (0, 0, 0)
 # 利用迴圈依序進入每一筆資料
 while i < Student:
     i += 1
-    now = now[:71] + str(i)
+    now = now[:72] + str(i)
     browser.open(now.strip())
     access = browser.get_current_page()
 
