@@ -18,7 +18,7 @@ def show(Name, Student, Y1, Y2, Y2_3, Y3_4, Y4_beyond):
     browser["qs0"] = Name
     browser["dcf"] = "ad"
     browser.submit_selected()
-
+    
     # 紀錄網址中的ccd項
     ccd = browser.get_url()
     ccd = ccd[52:58:]
@@ -27,13 +27,12 @@ def show(Name, Student, Y1, Y2, Y2_3, Y3_4, Y4_beyond):
     browser.select_form('form[name="main"]')
     browser["sortby"] = "-yr"
     browser["SubmitChangePage"] = "1"
-    browser.submit_selected()
 
     # 進入第一筆資料，並取得資料網址
     enter = "/cgi-bin/gs32/gsweb.cgi/ccd=" + ccd + "/record"
     browser.follow_link(enter.strip())
     now = browser.get_url()
-
+    
     # 迴圈控制變數宣告
     i = 0
 
@@ -49,7 +48,6 @@ def show(Name, Student, Y1, Y2, Y2_3, Y3_4, Y4_beyond):
         if student_name in data:
             try:
                 oral_defense = access.body.form.div.table.tbody.tr.td.table.find("th",text="口試日期:").find_next_sibling().get_text()
-
                 # 於data的對應key中加入口試日期，並將入學年以西元年表示，轉成string
                 data[student_name].append(oral_defense)
                 data[student_name][0] += 1911

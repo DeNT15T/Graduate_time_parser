@@ -40,11 +40,10 @@ ccd = ccd[54:60:]
 # 根據畢業年遞減排序
 browser.select_form('form[name="main"]')
 browser["sortby"] = "-yr"
-browser["SubmitChangePage"] = "1"
-browser.submit_selected()
+# browser["SubmitChangePage"] = "1"
 
 # 進入第一筆資料，並取得資料網址
-enter = "/cgi-bin/gs32/gsweb.cgi/ccd" + ccd + "./record"
+enter = "/cgi-bin/gs32/gsweb.cgi/ccd=" + ccd + "/record"
 browser.follow_link(enter.strip())
 now = browser.get_url()
 
@@ -54,10 +53,10 @@ Y1, Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0, 0)
 # 檢查無窮迴圈用的變數
 diff_odd, diff_even, check = (0, 0, 0)
 
-# 利用迴圈依序進入每一筆資料
+# 迴圈依序進入每一筆資料
 while i < Student:
     i += 1
-    now = now[:72] + str(i)
+    now = now[:71] + str(i)
     browser.open(now.strip())
     access = browser.get_current_page()
 
