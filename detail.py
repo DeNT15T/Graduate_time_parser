@@ -2,7 +2,7 @@ import mechanicalsoup
 
 # data用來紀錄學生姓名、L串列紀錄各畢業時間的入學年與口試日期
 data={}
-L1, L2, L2_3, L3_4, L4_beyond = ([],[],[],[],[])
+L1, L2, L3, L4, L5 = ([],[],[],[],[])
 
 
 def show(Name, Student, result):
@@ -24,7 +24,10 @@ def show(Name, Student, result):
     ccd = ccd[52:58:]
 
     # 根據畢業年遞減排序
-    browser.select_form('form[name="main"]')
+    try:
+        browser.select_form('form[name="main"]')
+    except LinkNotFoundError:
+        print("系統過載，請稍後再試")
     browser["sortby"] = "-yr"
     browser["SubmitChangePage"] = "1"
 
@@ -48,22 +51,22 @@ def show(Name, Student, result):
         if student_name in data:
             try:
                 oral_defense = access.body.form.div.table.tbody.tr.td.table.find("th", text="口試日期:").find_next_sibling().get_text()
+#                oral_defense = ''.join(c for c in oral_defense if c.isdigit())
                 # 於data的對應key中加入口試日期，並將入學年以西元年表示，轉成string
                 data[student_name].append(oral_defense)
-                data[student_name][0] += 1911
-                data[student_name][0] = str(data[student_name][0])+"年"
+                data[student_name][0] = f"{str(int(data[student_name][0])+1911)} 年"
 
                 # 依照value中的畢業時間資訊分類至對應的L串列中
                 if data[student_name][1] == "1":
-                    L1.append([data[student_name][0],data[student_name][2]])
+                    L1.append([data[student_name][0], data[student_name][2]])
                 elif data[student_name][1] == "2":
-                    L2.append([data[student_name][0],data[student_name][2]])
+                    L2.append([data[student_name][0], data[student_name][2]])
                 elif data[student_name][1] == "2_3":
-                    L2_3.append([data[student_name][0],data[student_name][2]])
+                    L3.append([data[student_name][0], data[student_name][2]])
                 elif data[student_name][1] == "3_4":
-                    L3_4.append([data[student_name][0],data[student_name][2]])
+                    L4.append([data[student_name][0], data[student_name][2]])
                 elif data[student_name][1] == "4_beyond":
-                    L4_beyond.append([data[student_name][0],data[student_name][2]])
+                    L5.append([data[student_name][0], data[student_name][2]])
 
             # 若口試日期取得失敗，繼續迴圈
             except AttributeError:
@@ -86,20 +89,20 @@ def show(Name, Student, result):
     else:
         print("無資料")
     print(f"第三年畢業的 {result[2]} 位學生中：")
-    if(L2_3 != []):
-        for time in L2_3:
+    if(L3 != []):
+        for time in L3:
             print(f"曾有人於 {time[0]} 入學，於 {time[1]} 進行口試")
     else:
         print("無資料")
     print(f"第四年畢業的 {result[3]} 位學生中：")
-    if(L3_4 != []):
-        for time in L3_4:
+    if(L4 != []):
+        for time in L4:
             print(f"曾有人於 {time[0]} 入學，於 {time[1]} 進行口試")
     else:
         print("無資料")
     print(f"第五年以上畢業的 {result[4]} 位學生中：")
-    if(L4_beyond != []):
-        for time in L4_beyond:
+    if(L5 != []):
+        for time in L5:
             print(f"曾有人於 {time[0]} 入學，於 {time[1]} 進行口試")
     else:
         print("無資料")

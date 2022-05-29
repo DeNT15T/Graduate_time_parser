@@ -1,29 +1,22 @@
 import mechanicalsoup
-import student_id_converter
+import id_converter
 import detail
 
 class LabCensusSystem:
     def __init__(self):
         # handle user input
-        school = input('欲查詢學校[1.交大 2.中央 3.清大 4.陽明]，輸入數字：')
-        name = input('教授名稱：')
-        sample_count = int(input('參考最近碩士畢業生的數量：'))
+        self.school = input('欲查詢學校[1.交大 2.中央 3.清大 4.陽明]，輸入數字：')
+        self.name = input('教授名稱：')
+        self.sample_count = int(input('參考最近碩士畢業生的數量：'))
 
         # set filter
         cnt = input('欲過濾的系所數量（選填）：')
-        filter = []
-        if(cnt == ''):
-            cnt = 0
-        else:
-            cnt = int(cnt)
+        self.filter = []
+        cnt = 0 if(cnt=='') else int(cnt)
         while cnt:
-            filter.append(input('過濾系所：'))
+            self.filter.append(input('過濾系所：'))
             cnt -= 1
 
-        self.school = school
-        self.name = name
-        self.sample_count = sample_count
-        self.filter = filter
         self.result = [0,0,0,0,0]
 
     def Search(self):
@@ -56,23 +49,25 @@ class LabCensusSystem:
         now = browser.get_url()
 
         # Y2：兩年畢業、Y2_3：兩年以上三年以下畢業，以此類推；previous_number用來紀錄前一筆的學號
-        Y1, Y2, Y2_3, Y3_4, Y4_beyond, previous_number, i = (0, 0, 0, 0, 0, 0, 0)
+        previous_number, i = 0, 0
 
         # 檢查無窮迴圈用的變數
         diff_odd, diff_even, check = (0, 0, 0)
 
         # 迴圈依序進入每一筆資料
-        while i < self.sample_count:
+        cnt = self.sample_count
+        while i < cnt:
             i += 1
             now = now[:71] + str(i)
             browser.open(now.strip())
             access = browser.get_current_page()
 
             # 避免過度過濾導致無窮迴圈
+
             if(i%2==1):
-                diff_odd = self.sample_count - i
+                diff_odd = cnt - i
             else:
-                diff_even = self.sample_count - i
+                diff_even = cnt - i
             if(diff_odd == diff_even):
                 check += 1
             else:
@@ -84,13 +79,13 @@ class LabCensusSystem:
             # 過濾博士生資料
             degree = access.body.form.div.table.tbody.tr.td.table.find("th",text="學位類別:").find_next_sibling().get_text()
             if (degree == "博士"):
-                self.sample_count += 1
+                cnt += 1
                 continue
 
             # 過濾系所
             Department = access.body.form.div.table.tbody.tr.td.table.find("th",text="系所名稱:").find_next_sibling().get_text()
             if(Department in self.filter):
-                self.sample_count += 1
+                cnt += 1
                 continue
 
             # 取得學號，並偵測第 i 筆資料是否已超過教授收過的學生量
@@ -105,13 +100,13 @@ class LabCensusSystem:
 
             # 過濾出學號中的入學年資訊
             if(self.school == "1"):
-                enter_year = student_id_converter.NCTU(number)
+                enter_year = id_converter.NCTU(number)
             elif(self.school == "2"):
-                enter_year = student_id_converter.NCU(number)
+                enter_year = id_converter.NCU(number)
             elif(self.school == "3"):
-                enter_year = student_id_converter.NTHU(number)
+                enter_year = id_converter.NTHU(number)
             elif(self.school == "4"):
-                enter_year = student_id_converter.NYMU(number)
+                enter_year = id_converter.NYMU(number)
 
             # 畢業生名字
             try:
@@ -143,7 +138,7 @@ class LabCensusSystem:
         print(f"最近 {str(self.sample_count)} 筆碩士畢業生紀錄中")
         print(f"{self.result[0]}\t位第一年畢業")
         print(f"{self.result[1]}\t位第二年畢業")
-        print(f"{self.result[2]}\t位第三畢業")
+        print(f"{self.result[2]}\t位第三年畢業")
         print(f"{self.result[3]}\t位第四年畢業")
         print(f"{self.result[4]}\t位第五年以上畢業")
 
