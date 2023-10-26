@@ -1,7 +1,12 @@
 def NCTU(number):
-    number = number[0:2]
-    if(number[0]=="0"):
+    if number[0]=="3":
+        number = number[1:3]
+         
         number = "1" + number
+    else:
+        number = number[0:2]
+        if(number[0]=="0"):
+            number = "1" + number
     return number
 
 def NCU(number):
@@ -23,3 +28,4 @@ def NYMU(number):
     if(number[0]=="0"):
         number = "1" + number
     return number
+ 
