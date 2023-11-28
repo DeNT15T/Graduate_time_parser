@@ -1,7 +1,8 @@
 def NCTU(number):
-    if number[0]=="3":
+
+    
+    if number[0]=="3"or number[0]=="5":
         number = number[1:3]
-         
         number = "1" + number
     else:
         number = number[0:2]
